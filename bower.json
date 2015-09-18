@@ -1,7 +1,7 @@
 {
   "name": "json-refs",
-  "main": "browser/json-refs.js",
-  "version": "1.0.5",
+  "main": "browser/json-refs-standalone.js",
+  "version": "1.0.6",
   "homepage": "https://github.com/whitlockjc/json-refs",
   "authors": [
     "Jeremy Whitlock <jwhitlock@apache.org>"
@@ -15,7 +15,6 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "browser/*-standalone*.js",
     "gulpfile.js",
     "index.js",
     "package.json",
