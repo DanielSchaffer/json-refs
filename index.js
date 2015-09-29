@@ -88,18 +88,21 @@ function getRemoteJson (url, options) {
   var json = remoteCache[url];
   var allTasks = Promise.resolve();
   var scheme = url.indexOf(':') === -1 ? undefined : url.split(':')[0];
+  var schemeSupportedByOptions = _.isArray(options.supportedSchemes) &&
+    _.isFunction(options.handleSchema) &&
+    options.supportedSchemes.indexOf(scheme) >= 0;
 
   if (!_.isUndefined(json)) {
     allTasks = allTasks.then(function () {
       return json;
     });
-  } else if (supportedSchemes.indexOf(scheme) === -1 && !_.isUndefined(scheme)) {
+  } else if (!schemeSupportedByOptions && supportedSchemes.indexOf(scheme) === -1 && !_.isUndefined(scheme)) {
     allTasks = allTasks.then(function () {
       return Promise.reject(new Error('Unsupported remote reference scheme: ' + scheme));
     });
   } else {
-    if (_.isFunction(options.handleScheme)) {
-      allTasks = options.handleScheme(scheme, url, options) || pathLoader.load(url, options);
+    if (schemeSupportedByOptions) {
+      allTasks = options.handleScheme(scheme, url, options);
     } else {
       allTasks = pathLoader.load(url, options);
     }
@@ -661,10 +664,6 @@ module.exports.resolveRefs = function resolveRefs (json, options, done) {
 
   if (_.isUndefined(options)) {
     options = {};
-  }
-
-  if (options.supportedSchemes) {
-    supportedSchemes.splice.apply(supportedSchemes, [0].concat(options.supportedSchemes));
   }
 
   allTasks = allTasks.then(function () {
