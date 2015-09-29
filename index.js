@@ -99,7 +99,7 @@ function getRemoteJson (url, options) {
     });
   } else {
     if (_.isFunction(options.handleScheme)) {
-      allTasks = options.handleScheme(scheme, url, options);
+      allTasks = options.handleScheme(scheme, url, options) || pathLoader.load(url, options);
     } else {
       allTasks = pathLoader.load(url, options);
     }
