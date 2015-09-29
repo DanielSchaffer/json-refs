@@ -98,7 +98,11 @@ function getRemoteJson (url, options) {
       return Promise.reject(new Error('Unsupported remote reference scheme: ' + scheme));
     });
   } else {
-    allTasks = pathLoader.load(url, options);
+    if (_.isFunction(options.handleScheme)) {
+      allTasks = options.handleScheme(scheme, url, options);
+    } else {
+      allTasks = pathLoader.load(url, options);
+    }
 
     if (options.processContent) {
       allTasks = allTasks.then(function (content) {
@@ -653,6 +657,10 @@ module.exports.resolveRefs = function resolveRefs (json, options, done) {
 
   if (_.isUndefined(options)) {
     options = {};
+  }
+
+  if (options.supportedSchemes) {
+    supportedSchemes.splice.apply(supportedSchemes, [0].concat(options.supportedSchemes));
   }
 
   allTasks = allTasks.then(function () {
