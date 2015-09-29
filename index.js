@@ -115,6 +115,10 @@ function getRemoteJson (url, options) {
     allTasks = allTasks.then(function (nJson) {
       remoteCache[url] = nJson;
 
+      if (_.isFunction(options.afterProcessContent)) {
+        options.afterProcessContent(nJson, url);
+      }
+
       return nJson;
     });
   }
